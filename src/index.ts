@@ -31,13 +31,16 @@ const create_link_body = {
 app.post(
     "/links",
     async ({ body, set }) => {
-        const { short_link, destination_link } = body;
+        const { short_link, destination_link } =
+            body;
         const id = generateId();
 
         const [existing_short_link] = await db
             .select()
             .from(links)
-            .where(eq(links.short_link, short_link));
+            .where(
+                eq(links.short_link, short_link),
+            );
 
         if (existing_short_link) {
             set.status = 409;
@@ -50,15 +53,26 @@ app.post(
             };
         }
 
-        const [existing_destination_link] = await db
-            .select()
-            .from(links)
-            .where(eq(links.destination_link, destination_link));
+        const [existing_destination_link] =
+            await db
+                .select()
+                .from(links)
+                .where(
+                    eq(
+                        links.destination_link,
+                        destination_link,
+                    ),
+                );
 
-        if (existing_destination_link && existing_destination_link.short_link !== short_link) {
+        if (
+            existing_destination_link &&
+            existing_destination_link.short_link !==
+                short_link
+        ) {
             return {
                 id: existing_destination_link.id,
-                short_link: existing_destination_link.short_link,
+                short_link:
+                    existing_destination_link.short_link,
                 existing: true,
             };
         }
@@ -70,7 +84,10 @@ app.post(
             is_active: true,
         });
 
-        return { id, short_link };
+        return {
+            id,
+            short_link,
+        };
     },
     create_link_body,
 );
@@ -91,7 +108,9 @@ app.put(
 
         await db
             .update(links)
-            .set({ is_active: is_active })
+            .set({
+                is_active: is_active,
+            })
             .where(eq(links.id, link_identifier));
 
         set.status = 200;
@@ -99,60 +118,75 @@ app.put(
     edit_link_body,
 );
 
-app.get("/m/:link_identifier", async ({ params, set }) => {
-    const { link_identifier } = params;
+app.get(
+    "/m/:link_identifier",
+    async ({ params, set }) => {
+        const { link_identifier } = params;
 
-    const [link] = await db
-        .select()
-        .from(links)
-        .where(eq(links.id, link_identifier));
-    if (!link) {
-        set.status = 404;
+        const [link] = await db
+            .select()
+            .from(links)
+            .where(eq(links.id, link_identifier));
+        if (!link) {
+            set.status = 404;
+            return {
+                error: {
+                    message: "link not found",
+                },
+            };
+        }
+
         return {
-            error: { message: "link not found" },
+            link,
         };
-    }
-
-    return {
-        link,
-    };
-});
+    },
+);
 
 /**
  * Access link
  */
-app.get("/:link_identifier", async ({ params, set }) => {
-    const { link_identifier } = params;
+app.get(
+    "/:link_identifier",
+    async ({ params, set }) => {
+        const { link_identifier } = params;
 
-    const [link] = await db
-        .select()
-        .from(links)
-        .where(
-            or(
-                eq(links.short_link, link_identifier),
-                eq(links.id, link_identifier),
-            ),
-        )
-        .limit(1);
+        const [link] = await db
+            .select()
+            .from(links)
+            .where(
+                or(
+                    eq(
+                        links.short_link,
+                        link_identifier,
+                    ),
+                    eq(links.id, link_identifier),
+                ),
+            )
+            .limit(1);
 
-    if (!link) {
-        set.status = 404;
-        return "not found";
-    }
+        if (!link) {
+            set.status = 404;
+            return "not found";
+        }
 
-    if (!link.is_active) {
-        set.status = 403;
-        return "link deactivated";
-    }
+        if (!link.is_active) {
+            set.status = 403;
+            return "link deactivated";
+        }
 
-    set.redirect = link.destination_link;
-    return;
-});
+        set.redirect = link.destination_link;
+        return;
+    },
+);
 
 app.listen(port, async () => {
     console.log("Running migration");
     await migrate(db, {
-        migrationsFolder: join(import.meta.dir, "..", "drizzle"),
+        migrationsFolder: join(
+            import.meta.dir,
+            "..",
+            "drizzle",
+        ),
     });
     console.log("Migration success.");
     console.log("Web server running.");

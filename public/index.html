@@ -2,14 +2,25 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            http-equiv="X-UA-Compatible"
+            content="IE=edge"
+        />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
         <title>Lonk</title>
     </head>
 
     <body>
-        <form onsubmit="create_link(event); return false;">
-            <p style="color: red" id="error_message"></p>
+        <form
+            onsubmit="create_link(event); return false;"
+        >
+            <p
+                style="color: red"
+                id="error_message"
+            ></p>
             <p>Destination URL</p>
             <input
                 id="destination_link"
@@ -30,7 +41,9 @@
 
             <br />
             <br />
-            <button type="submit">Create Link</button>
+            <button type="submit">
+                Create Link
+            </button>
         </form>
     </body>
 
@@ -38,24 +51,40 @@
         async function create_link(e) {
             e.preventDefault();
 
-            const err_element = document.getElementById("error_message");
+            const err_element =
+                document.getElementById(
+                    "error_message",
+                );
             err_element.innerText = "";
 
-            const short_link = document.getElementById("short_link").value;
+            const short_link =
+                document.getElementById(
+                    "short_link",
+                ).value;
             const destination_link =
-                document.getElementById("destination_link").value;
+                document.getElementById(
+                    "destination_link",
+                ).value;
 
             const req = await fetch("/links", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type":
+                        "application/json",
                 },
-                body: JSON.stringify({ short_link, destination_link }),
+                body: JSON.stringify({
+                    short_link,
+                    destination_link,
+                }),
             });
 
             const body = await req.json();
-            if (body.error && body.error.message) {
-                err_element.innerText = body.error.message;
+            if (
+                body.error &&
+                body.error.message
+            ) {
+                err_element.innerText =
+                    body.error.message;
             }
 
             if (body.id) {
