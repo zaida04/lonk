@@ -42,7 +42,7 @@
                 const link_identifier = document.createElement("a"); // Create an anchor element
                 const hostname = window.location.hostname; // Get the current hostname
                 link_identifier.href = `https://${hostname}/${data.link.short_link}`; // Set the href attribute
-                link_identifier.innerText = `Short Link: ${data.link.short_link}`; // Set the link text
+                link_identifier.innerText = `Short Link: https://${hostname}/${data.link.short_link}`; // Set the link text
 
                 const destination_link =
                     document.createElement("p");
