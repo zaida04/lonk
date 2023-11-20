@@ -1,7 +1,6 @@
 {
   "name": "lonk",
   "module": "index.ts",
-  "type": "module",
   "scripts": {
     "start": "bun src/index.ts",
     "dev": "bun --watch src/index.ts",
@@ -18,9 +17,8 @@
   },
   "dependencies": {
     "@elysiajs/static": "^0.7.1",
-    "@gtrabanco/elysia-hmr-html": "1.0.0",
     "drizzle-orm": "^0.29.0",
     "elysia": "^0.7.28",
-    "nanoid": "^5.0.3"
+    "nanoid": "^5.0.3"  
   }
 }
