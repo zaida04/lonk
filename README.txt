@@ -5,4 +5,6 @@ like https://tracing.cse.buffalo.edu/quizzes/blahblahblah (52 chars).
 
 Now, we can have links like https://lonk.lol/115_w9_q1 (26 chars).
 
+Stack: Bun (TypeScript), Drizzle (SQLite), and plain ol' HTML/CSS/JS
+
 This was a productive use of time, I promise.
