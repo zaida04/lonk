@@ -5,7 +5,7 @@
     "start": "bun src/index.ts",
     "dev": "bun --watch src/index.ts",
     "migrate": "drizzle-kit generate:sqlite",
-    "format": "prettier --write **/*.{ts,html}"
+    "format": "prettier --write **/*.{js,ts,html}"
   },
   "devDependencies": {
     "bun-types": "latest",
