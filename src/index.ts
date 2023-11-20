@@ -1,11 +1,13 @@
 import { Elysia, t } from "elysia";
-import { generateId } from "./nanoid.ts";
-import { db } from "./db.ts";
-import { links } from "./db_schema.ts";
 import { eq, or } from "drizzle-orm";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { join } from "path";
 import { staticPlugin } from "@elysiajs/static";
+
+import { generate_id } from "./util";
+import { db } from "./db";
+import { links } from "./db_schema";
+
 
 const port = process.env.PORT ?? 4500;
 const app = new Elysia();
@@ -32,7 +34,7 @@ app.post(
     "/links",
     async ({ body, set }) => {
         const { short_link, destination_link } = body;
-        const id = generateId();
+        const id = generate_id();
 
         const [existing_short_link] = await db
             .select()
