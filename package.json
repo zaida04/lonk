@@ -5,6 +5,7 @@
   "scripts": {
     "start": "bun src/index.ts",
     "dev": "bun --watch src/index.ts",
+    "migrate": "drizzle-kit generate:sqlite",
     "format": "prettier --write **/*.{ts,html}"
   },
   "devDependencies": {
@@ -17,6 +18,7 @@
   },
   "dependencies": {
     "@elysiajs/static": "^0.7.1",
+    "@gtrabanco/elysia-hmr-html": "1.0.0",
     "drizzle-orm": "^0.29.0",
     "elysia": "^0.7.28",
     "nanoid": "^5.0.3"

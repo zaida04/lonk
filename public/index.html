@@ -1,29 +1,68 @@
 <!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lonk</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/public/index.css">
-    <title>Lonk</title>
-</head>
-
-<body>
-    <form>
-        <div class="input-with-label">
+    <body>
+        <form onsubmit="create_link(event); return false;">
+            <p style="color: red" id="error_message"></p>
             <p>Destination URL</p>
-            <input id="destination_link"></input>
-        </div>
-        <button id="create_link">Create Link</button>
-    </form>
+            <input
+                id="destination_link"
+                type="url"
+                placeholder="Type here"
+                required
+            />
 
-</body>
+            <p>Desired Short Link</p>
+            <input
+                id="short_link"
+                type="text"
+                min="1"
+                max="20"
+                placeholder="Type here"
+                required
+            />
 
-<script>
-    function create_link() {
+            <br />
+            <br />
+            <button type="submit">Create Link</button>
+        </form>
+    </body>
 
-    }
-</script>
+    <script>
+        async function create_link(e) {
+            e.preventDefault();
 
+            const err_element = document.getElementById("error_message");
+            err_element.innerText = "";
+
+            const short_link = document.getElementById("short_link").value;
+            const destination_link =
+                document.getElementById("destination_link").value;
+
+            const req = await fetch("/links", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ short_link, destination_link }),
+            });
+
+            const body = await req.json();
+            if (body.error && body.error.message) {
+                err_element.innerText = body.error.message;
+            }
+
+            if (body.id) {
+                window.location.href = `/manage?id=${body.id}`;
+            }
+
+            return false;
+        }
+    </script>
 </html>

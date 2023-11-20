@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lonk | Manage Link</title>
+    </head>
+
+    <body onload="load_data()">
+        <div id="content">
+            <p id="loading">Loading</p>
+        </div>
+    </body>
+
+    <script>
+        const loading_el = document.getElementById("loading");
+        const content_el = document.getElementById("content");
+
+        const url_params = new URLSearchParams(window.location.search);
+        const link_id = url_params.get("id");
+
+        async function load_data() {
+            const req = await fetch(`/m/${link_id}`);
+            const data = await req.json();
+
+            if (data.link) {
+                loading_el.remove();
+
+                const link_identifier = document.createElement("p");
+                link_identifier.innerText = `Short Link: ${data.link.short_link}`;
+
+                const destination_link = document.createElement("p");
+                destination_link.innerText = `Destination URL: ${data.link.destination_link}`;
+
+                const label = document.createElement("label");
+                label.innerText = "Is Active";
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = data.link.is_active;
+                checkbox.onchange = handle_check;
+
+                content_el.append(
+                    link_identifier,
+                    destination_link,
+                    label,
+                    checkbox,
+                );
+            }
+        }
+
+        async function handle_check(event) {
+            await fetch(`/m/${link_id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    is_active: event.target.checked,
+                }),
+            });
+        }
+    </script>
+</html>
