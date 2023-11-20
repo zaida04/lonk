@@ -52,29 +52,6 @@ app.post(
             };
         }
 
-        const [existing_destination_link] = await db
-            .select()
-            .from(links)
-            .where(
-                eq(
-                    links.destination_link,
-                    destination_link,
-                ),
-            );
-
-        if (
-            existing_destination_link &&
-            existing_destination_link.short_link !==
-                short_link
-        ) {
-            return {
-                id: existing_destination_link.id,
-                short_link:
-                    existing_destination_link.short_link,
-                existing: true,
-            };
-        }
-
         await db.insert(links).values({
             id,
             short_link,
