@@ -31,16 +31,13 @@ const create_link_body = {
 app.post(
     "/links",
     async ({ body, set }) => {
-        const { short_link, destination_link } =
-            body;
+        const { short_link, destination_link } = body;
         const id = generateId();
 
         const [existing_short_link] = await db
             .select()
             .from(links)
-            .where(
-                eq(links.short_link, short_link),
-            );
+            .where(eq(links.short_link, short_link));
 
         if (existing_short_link) {
             set.status = 409;
@@ -53,16 +50,15 @@ app.post(
             };
         }
 
-        const [existing_destination_link] =
-            await db
-                .select()
-                .from(links)
-                .where(
-                    eq(
-                        links.destination_link,
-                        destination_link,
-                    ),
-                );
+        const [existing_destination_link] = await db
+            .select()
+            .from(links)
+            .where(
+                eq(
+                    links.destination_link,
+                    destination_link,
+                ),
+            );
 
         if (
             existing_destination_link &&
@@ -118,66 +114,57 @@ app.put(
     edit_link_body,
 );
 
-app.get(
-    "/m/:link_identifier",
-    async ({ params, set }) => {
-        const { link_identifier } = params;
+app.get("/m/:link_identifier", async ({ params, set }) => {
+    const { link_identifier } = params;
 
-        const [link] = await db
-            .select()
-            .from(links)
-            .where(eq(links.id, link_identifier));
-        if (!link) {
-            set.status = 404;
-            return {
-                error: {
-                    message: "link not found",
-                },
-            };
-        }
-
+    const [link] = await db
+        .select()
+        .from(links)
+        .where(eq(links.id, link_identifier));
+    if (!link) {
+        set.status = 404;
         return {
-            link,
+            error: {
+                message: "link not found",
+            },
         };
-    },
-);
+    }
+
+    return {
+        link,
+    };
+});
 
 /**
  * Access link
  */
-app.get(
-    "/:link_identifier",
-    async ({ params, set }) => {
-        const { link_identifier } = params;
+app.get("/:link_identifier", async ({ params, set }) => {
+    const { link_identifier } = params;
 
-        const [link] = await db
-            .select()
-            .from(links)
-            .where(
-                or(
-                    eq(
-                        links.short_link,
-                        link_identifier,
-                    ),
-                    eq(links.id, link_identifier),
-                ),
-            )
-            .limit(1);
+    const [link] = await db
+        .select()
+        .from(links)
+        .where(
+            or(
+                eq(links.short_link, link_identifier),
+                eq(links.id, link_identifier),
+            ),
+        )
+        .limit(1);
 
-        if (!link) {
-            set.status = 404;
-            return "not found";
-        }
+    if (!link) {
+        set.status = 404;
+        return "not found";
+    }
 
-        if (!link.is_active) {
-            set.status = 403;
-            return "link deactivated";
-        }
+    if (!link.is_active) {
+        set.status = 403;
+        return "link deactivated";
+    }
 
-        set.redirect = link.destination_link;
-        return;
-    },
-);
+    set.redirect = link.destination_link;
+    return;
+});
 
 app.listen(port, async () => {
     console.log("Running migration");

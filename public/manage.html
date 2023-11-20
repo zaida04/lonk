@@ -31,15 +31,14 @@
         const link_id = url_params.get("id");
 
         async function load_data() {
-            const req = await fetch(
-                `/m/${link_id}`,
-            );
+            const req = await fetch(`/m/${link_id}`);
             const data = await req.json();
 
             if (data.link) {
                 loading_el.remove();
 
-                const link_identifier = document.createElement("a"); // Create an anchor element
+                const link_identifier =
+                    document.createElement("a"); // Create an anchor element
                 const hostname = window.location.hostname; // Get the current hostname
                 link_identifier.href = `https://${hostname}/${data.link.short_link}`; // Set the href attribute
                 link_identifier.innerText = `Short Link: https://${hostname}/${data.link.short_link}`; // Set the link text
@@ -49,18 +48,14 @@
                 destination_link.innerText = `Destination URL: ${data.link.destination_link}`;
 
                 const label =
-                    document.createElement(
-                        "label",
-                    );
-                label.innerText = "Is Active (click to change)";
+                    document.createElement("label");
+                label.innerText =
+                    "Is Active (click to change)";
 
                 const checkbox =
-                    document.createElement(
-                        "input",
-                    );
+                    document.createElement("input");
                 checkbox.type = "checkbox";
-                checkbox.checked =
-                    data.link.is_active;
+                checkbox.checked = data.link.is_active;
                 checkbox.onchange = handle_check;
 
                 content_el.append(
@@ -76,12 +71,10 @@
             await fetch(`/m/${link_id}`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type":
-                        "application/json",
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    is_active:
-                        event.target.checked,
+                    is_active: event.target.checked,
                 }),
             });
         }
